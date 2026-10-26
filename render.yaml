@@ -1,0 +1,43 @@
+databases:
+  - name: springbootdemo-db
+    databaseName: springbootdemo
+    user: springbootdemo
+    plan: free
+    region: oregon
+
+services:
+  - type: web
+    name: springbootdemo
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: render
+      - key: APP_AUTH_USERNAME
+        sync: false
+      - key: APP_AUTH_PASSWORD
+        sync: false
+      - key: DB_HOST
+        fromDatabase:
+          name: springbootdemo-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: springbootdemo-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: springbootdemo-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: springbootdemo-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: springbootdemo-db
+          property: password
