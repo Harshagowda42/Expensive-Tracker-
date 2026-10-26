@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS expenses (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    owner_username VARCHAR(100) NOT NULL,
+    amount DECIMAL(11, 2) NOT NULL CHECK (amount > 0),
+    category VARCHAR(40) NOT NULL,
+    spent_on DATE NOT NULL,
+    note VARCHAR(200) NOT NULL DEFAULT '',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX expenses_owner_date_idx (owner_username, spent_on, id)
+);
+
+CREATE TABLE IF NOT EXISTS app_migrations (
+    name VARCHAR(100) NOT NULL PRIMARY KEY,
+    executed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS app_users (
+    username VARCHAR(32) NOT NULL PRIMARY KEY,
+    password_hash VARCHAR(60) NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

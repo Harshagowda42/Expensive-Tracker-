@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6fb">
+  <title>Sign in</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #172033;
+      background: #f4f6fb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      display: grid;
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px;
+      place-items: center;
+      background: radial-gradient(ellipse at top, #e7edff, transparent 52%), #f4f6fb;
+    }
+    main {
+      width: min(100%, 920px);
+      padding: 34px;
+      border: 1px solid #e6e9f0;
+      border-radius: 22px;
+      background: #fff;
+      box-shadow: 0 20px 60px #23345c14;
+    }
+    #login-view { width: min(100%, 400px); margin-inline: auto; }
+    .mark {
+      display: grid;
+      width: 46px;
+      height: 46px;
+      margin-bottom: 26px;
+      place-items: center;
+      border-radius: 14px;
+      background: #eef1ff;
+      color: #4c59d9;
+      font-size: 23px;
+    }
+    h1 { margin: 0; font-size: 27px; letter-spacing: -0.7px; }
+    .subtitle { margin: 9px 0 26px; color: #68738a; font-size: 14px; line-height: 1.6; }
+    label { display: block; margin: 17px 0 7px; font-size: 13px; font-weight: 650; }
+    input {
+      width: 100%;
+      min-height: 46px;
+      padding: 11px 13px;
+      border: 1px solid #dce1eb;
+      border-radius: 9px;
+      outline: none;
+      background: #fff;
+      color: #172033;
+      font: inherit;
+    }
+    input:focus { border-color: #626de5; box-shadow: 0 0 0 3px #626de51c; }
+    button {
+      min-height: 46px;
+      border: 0;
+      border-radius: 9px;
+      background: #515dd7;
+      color: #fff;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+    button:hover { background: #424ec5; }
+    button:disabled { cursor: wait; opacity: 0.7; }
+    #login-button, #save-button { width: 100%; margin-top: 22px; }
+    .form-switch { margin: 18px 0 0; color: #68738a; text-align: center; font-size: 13px; }
+    .text-button { min-height: auto; padding: 0; background: transparent; color: #515dd7; font: inherit; font-weight: 650; }
+    .text-button:hover { background: transparent; text-decoration: underline; }
+    #logout-button { padding: 0 18px; background: #eef1ff; color: #424ec5; }
+    #logout-button:hover { background: #e1e5ff; }
+    .message { min-height: 20px; margin: 14px 0 0; color: #68738a; font-size: 13px; }
+    .message.error { color: #b42336; }
+    .dashboard-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .dashboard-header .mark { flex: 0 0 46px; margin: 0 0 16px; }
+    .dashboard-header h1 { font-size: 30px; }
+    .dashboard-header .subtitle { margin-bottom: 0; }
+    .summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 26px 0; }
+    .summary-card, .panel { padding: 22px; border: 1px solid #e6e9f0; border-radius: 15px; }
+    .summary-card { background: #f8f9ff; }
+    .summary-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .summary-label { margin: 0 0 10px; color: #68738a; font-size: 13px; }
+    .summary-heading .summary-label { margin: 0; }
+    .month-picker { width: min(100%, 165px); min-height: 36px; padding: 6px 9px; border: 1px solid #dce1eb; border-radius: 8px; background: #fff; color: #172033; font: inherit; font-size: 13px; }
+    .month-picker:focus { border-color: #626de5; outline: none; box-shadow: 0 0 0 3px #626de51c; }
+    .summary-value { margin: 0; font-size: 25px; font-weight: 700; letter-spacing: -0.5px; }
+    .dashboard-grid { display: grid; grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr); gap: 20px; align-items: start; }
+    .panel h2 { margin: 0 0 18px; font-size: 18px; }
+    .expense-list-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+    .expense-list-header h2 { margin: 0; }
+    .clear-button { min-height: 36px; padding: 0 12px; border: 1px solid #f0cdd2; background: #fff; color: #b42336; font-size: 12px; }
+    .clear-button:hover { background: #fff3f4; }
+    .panel label { margin-top: 15px; }
+    .panel input, .panel select { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #dce1eb; border-radius: 9px; background: white; color: #172033; font: inherit; }
+    .panel input:focus, .panel select:focus { border-color: #626de5; outline: none; box-shadow: 0 0 0 3px #626de51c; }
+    #expense-list { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+    .expense-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; border: 1px solid #edf0f5; border-radius: 9px; }
+    .expense-main { min-width: 0; }
+    .expense-category { margin: 0; font-size: 13px; font-weight: 650; }
+    .expense-detail { margin: 2px 0 0; color: #68738a; font-size: 11px; overflow-wrap: anywhere; }
+    .expense-side { flex: 0 0 auto; text-align: right; }
+    .expense-amount { margin: 0; font-size: 13px; font-weight: 700; }
+    .delete-button { min-height: auto; margin-top: 2px; padding: 2px 0; background: transparent; color: #b42336; font-size: 11px; }
+    .delete-button:hover { background: transparent; text-decoration: underline; }
+    .empty-state { padding: 20px 10px; color: #68738a; text-align: center; font-size: 14px; }
+    [hidden] { display: none !important; }
+    @media (max-width: 680px) {
+      body { padding: 14px; }
+      main { padding: 24px 18px; }
+      .summary-grid { gap: 10px; }
+      .summary-card, .panel { padding: 17px; }
+      .summary-value { font-size: 21px; }
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="mark" aria-hidden="true">✦</div>
+    <section id="login-view">
+      <h1>Welcome back</h1>
+      <p class="subtitle">Sign in with your account to continue.</p>
+      <form id="login-form">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" required>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button id="login-button" type="submit">Sign in</button>
+      </form>
+      <p class="form-switch">New here? <button id="show-register-button" class="text-button" type="button">Create an account</button></p>
+    </section>
+    <section id="register-view" hidden>
+      <h1>Create your account</h1>
+      <p class="subtitle">Join your society expense tracker. Your expenses stay private to your account.</p>
+      <form id="register-form">
+        <label for="register-username">Username</label>
+        <input id="register-username" name="username" type="text" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]+" autocomplete="username" aria-describedby="username-help" required>
+        <p id="username-help" class="message">Use 3–32 letters, numbers, dots, underscores, or hyphens.</p>
+        <label for="register-password">Password</label>
+        <input id="register-password" name="password" type="password" minlength="10" maxlength="72" autocomplete="new-password" required>
+        <label for="confirm-password">Confirm password</label>
+        <input id="confirm-password" name="confirmPassword" type="password" minlength="10" maxlength="72" autocomplete="new-password" required>
+        <button id="register-button" type="submit">Create account</button>
+      </form>
+      <p class="form-switch">Already have an account? <button id="show-login-button" class="text-button" type="button">Sign in</button></p>
+    </section>
+    <section id="account-view" hidden>
+      <header class="dashboard-header">
+        <div>
+          <div class="mark" aria-hidden="true">✦</div>
+          <h1 id="greeting"></h1>
+          <p class="subtitle">Here’s your expense dashboard.</p>
+        </div>
+        <button id="logout-button" type="button">Sign out</button>
+      </header>
+      <div class="summary-grid" aria-live="polite">
+        <article class="summary-card">
+          <div class="summary-heading">
+            <label class="summary-label" for="month-filter">Monthly total</label>
+            <input id="month-filter" class="month-picker" type="month" aria-label="Choose expense month">
+          </div>
+          <p id="monthly-total" class="summary-value">₹0.00</p>
+        </article>
+        <article class="summary-card">
+          <p class="summary-label">All-time total</p>
+          <p id="overall-total" class="summary-value">₹0.00</p>
+        </article>
+      </div>
+      <div class="dashboard-grid">
+        <section class="panel">
+          <h2>Add an expense</h2>
+          <form id="expense-form">
+            <label for="expense-amount">Amount (INR)</label>
+            <input id="expense-amount" name="amount" type="number" min="0.01" max="999999999.99" step="0.01" placeholder="0.00" required>
+            <label for="expense-category">Category</label>
+            <select id="expense-category" name="category" required>
+              <option value="Food">Food</option>
+              <option value="Transport">Transport</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Bills">Bills</option>
+              <option value="Health">Health</option>
+              <option value="Other">Other</option>
+            </select>
+            <label for="expense-date">Date</label>
+            <input id="expense-date" name="date" type="date" required>
+            <label for="expense-note">What did you spend this on?</label>
+            <input id="expense-note" name="note" type="text" maxlength="200" placeholder="e.g., Lunch, bus fare, groceries" required>
+            <button id="save-button" type="submit">Add expense</button>
+          </form>
+        </section>
+        <section class="panel">
+          <div class="expense-list-header">
+            <h2 id="expense-list-title">Monthly expenses</h2>
+            <button id="clear-expenses-button" class="clear-button" type="button">Clear all</button>
+          </div>
+          <ul id="expense-list"></ul>
+        </section>
+      </div>
+    </section>
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+  </main>
+  <script>
+    const loginView = document.querySelector("#login-view");
+    const registerView = document.querySelector("#register-view");
+    const accountView = document.querySelector("#account-view");
+    const message = document.querySelector("#message");
+    const loginButton = document.querySelector("#login-button");
+    const loginForm = document.querySelector("#login-form");
+    const registerForm = document.querySelector("#register-form");
+    const expenseForm = document.querySelector("#expense-form");
+    const expenseList = document.querySelector("#expense-list");
+    const clearExpensesButton = document.querySelector("#clear-expenses-button");
+    const monthFilter = document.querySelector("#month-filter");
+    const currency = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" });
+    let csrfToken;
+    let allExpenses = [];
+
+    function showAccount(username) {
+      document.querySelector("#greeting").textContent = `Hello, ${username}!`;
+      loginView.hidden = true;
+      accountView.hidden = false;
+      message.textContent = "";
+      message.classList.remove("error");
+      loadExpenses().catch(showError);
+    }
+
+    function showLogin() {
+      accountView.hidden = true;
+      registerView.hidden = true;
+      loginView.hidden = false;
+    }
+
+    function showRegister() {
+      loginView.hidden = true;
+      accountView.hidden = true;
+      registerView.hidden = false;
+      message.textContent = "";
+      message.classList.remove("error");
+    }
+
+    async function loadCsrfToken() {
+      const response = await fetch("/api/csrf");
+      if (!response.ok) throw new Error("Could not prepare secure login. Refresh the page to try again.");
+      const data = await response.json();
+      csrfToken = data.token;
+    }
+
+    function showError(error) {
+      message.textContent = error.message || "Something went wrong. Please try again.";
+      message.classList.add("error");
+    }
+
+    async function api(url, options = {}) {
+      const response = await fetch(url, options);
+      if (response.status === 401) {
+        showLogin();
+        const error = new Error(
+          "Your sign-in expired. Sign in again, then check your expense list before retrying a save."
+        );
+        showError(error);
+        throw error;
+      }
+      const data = response.status === 204 ? null : await response.json();
+      if (!response.ok) throw new Error(data?.error || "The request could not be completed.");
+      return data;
+    }
+
+    function renderExpenses() {
+      const selectedMonth = monthFilter.value;
+      const monthExpenses = allExpenses.filter((expense) => expense.date.startsWith(selectedMonth));
+      const totalCents = allExpenses.reduce((sum, expense) => sum + Math.round(Number(expense.amount) * 100), 0);
+      const monthlyTotalCents = monthExpenses.reduce(
+        (sum, expense) => sum + Math.round(Number(expense.amount) * 100),
+        0
+      );
+      document.querySelector("#monthly-total").textContent = currency.format(monthlyTotalCents / 100);
+      document.querySelector("#overall-total").textContent = currency.format(totalCents / 100);
+      document.querySelector("#expense-list-title").textContent = `${formatMonth(selectedMonth)} expenses`;
+      clearExpensesButton.disabled = allExpenses.length === 0;
+      expenseList.replaceChildren();
+
+      if (monthExpenses.length === 0) {
+        const empty = document.createElement("li");
+        empty.className = "empty-state";
+        empty.textContent = allExpenses.length === 0
+          ? "No expenses yet. Add your first one!"
+          : `No expenses in ${formatMonth(selectedMonth)}.`;
+        expenseList.append(empty);
+        return;
+      }
+
+      for (const expense of monthExpenses) {
+        const item = document.createElement("li");
+        item.className = "expense-item";
+        const details = document.createElement("div");
+        details.className = "expense-main";
+        const category = document.createElement("p");
+        category.className = "expense-category";
+        category.textContent = expense.category;
+        const description = document.createElement("p");
+        description.className = "expense-detail";
+        const date = new Date(`${expense.date}T00:00:00`);
+        description.textContent = `${date.toLocaleDateString()}${expense.note ? ` · ${expense.note}` : ""}`;
+        details.append(category, description);
+
+        const side = document.createElement("div");
+        side.className = "expense-side";
+        const amount = document.createElement("p");
+        amount.className = "expense-amount";
+        amount.textContent = currency.format(Number(expense.amount));
+        const remove = document.createElement("button");
+        remove.className = "delete-button";
+        remove.type = "button";
+        remove.textContent = "Delete";
+        remove.setAttribute("aria-label", `Delete ${expense.category} expense`);
+        remove.addEventListener("click", async () => {
+          remove.disabled = true;
+          try {
+            await api(`/api/expenses/${expense.id}`, {
+              method: "DELETE",
+              headers: { "X-XSRF-TOKEN": csrfToken }
+            });
+            await loadExpenses();
+            message.textContent = "Expense deleted.";
+          } catch (error) {
+            remove.disabled = false;
+            showError(error);
+          }
+        });
+        side.append(amount, remove);
+        item.append(details, side);
+        expenseList.append(item);
+      }
+    }
+
+    function currentLocalMonth() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    }
+
+    function formatMonth(month) {
+      const [year, number] = month.split("-").map(Number);
+      return new Date(year, number - 1, 1).toLocaleDateString(undefined, {
+        month: "long",
+        year: "numeric"
+      });
+    }
+
+    async function loadExpenses() {
+      allExpenses = await api("/api/expenses");
+      renderExpenses();
+    }
+
+    function setExpenseDateToToday() {
+      const today = new Date();
+      const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 10);
+      const dateInput = document.querySelector("#expense-date");
+      dateInput.max = localToday;
+      dateInput.value = localToday;
+    }
+
+    expenseForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const formData = new FormData(form);
+      const expenseDate = formData.get("date");
+      const button = document.querySelector("#save-button");
+      button.disabled = true;
+      message.classList.remove("error");
+      message.textContent = "Saving expense…";
+      try {
+        await api("/api/expenses", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-XSRF-TOKEN": csrfToken },
+          body: JSON.stringify({
+            amount: formData.get("amount"),
+            category: formData.get("category"),
+            date: formData.get("date"),
+            note: formData.get("note")
+          })
+        });
+        form.reset();
+        setExpenseDateToToday();
+        monthFilter.value = expenseDate.slice(0, 7);
+        await loadExpenses();
+        message.textContent = "Expense added.";
+      } catch (error) {
+        showError(error);
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    monthFilter.addEventListener("change", renderExpenses);
+
+    clearExpensesButton.addEventListener("click", async () => {
+      if (allExpenses.length === 0
+          || !window.confirm(`Clear all ${allExpenses.length} expense(s) for this account? This cannot be undone.`)) {
+        return;
+      }
+
+      clearExpensesButton.disabled = true;
+      try {
+        await api("/api/expenses", {
+          method: "DELETE",
+          headers: { "X-XSRF-TOKEN": csrfToken }
+        });
+        await loadExpenses();
+        message.textContent = "All expenses cleared.";
+      } catch (error) {
+        clearExpensesButton.disabled = allExpenses.length === 0;
+        showError(error);
+      }
+    });
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const formData = new FormData(form);
+      loginButton.disabled = true;
+      message.classList.remove("error");
+      message.textContent = "Signing in…";
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-XSRF-TOKEN": csrfToken },
+          body: JSON.stringify({
+            username: formData.get("username"),
+            password: formData.get("password")
+          })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Sign in failed.");
+        form.reset();
+        setExpenseDateToToday();
+        message.textContent = "";
+        showAccount(data.username);
+      } catch (error) {
+        showError(error);
+      } finally {
+        loginButton.disabled = false;
+      }
+    });
+
+    document.querySelector("#show-register-button").addEventListener("click", showRegister);
+    document.querySelector("#show-login-button").addEventListener("click", showLogin);
+
+    registerForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      const password = formData.get("password");
+      if (password !== formData.get("confirmPassword")) {
+        showError(new Error("Passwords do not match."));
+        return;
+      }
+
+      const button = document.querySelector("#register-button");
+      button.disabled = true;
+      message.classList.remove("error");
+      message.textContent = "Creating your account…";
+      try {
+        const response = await fetch("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-XSRF-TOKEN": csrfToken },
+          body: JSON.stringify({
+            username: formData.get("username"),
+            password
+          })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Could not create your account.");
+        registerForm.reset();
+        setExpenseDateToToday();
+        showAccount(data.username);
+      } catch (error) {
+        showError(error);
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    document.querySelector("#logout-button").addEventListener("click", async () => {
+      const button = document.querySelector("#logout-button");
+      button.disabled = true;
+      try {
+        const response = await fetch("/api/logout", {
+          method: "POST",
+          headers: { "X-XSRF-TOKEN": csrfToken }
+        });
+        if (!response.ok) throw new Error("Sign out failed. Please try again.");
+        await loadCsrfToken();
+        showLogin();
+        message.textContent = "";
+        message.classList.remove("error");
+      } catch (error) {
+        showError(error);
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    async function initialize() {
+      try {
+        monthFilter.value = currentLocalMonth();
+        await loadCsrfToken();
+        const response = await fetch("/api/me");
+        if (response.ok) {
+          const data = await response.json();
+          setExpenseDateToToday();
+          showAccount(data.username);
+        } else if (response.status !== 401) {
+          throw new Error("Could not check your session. Refresh the page to try again.");
+        }
+      } catch (error) {
+        showError(error);
+      }
+    }
+
+    initialize();
+  </script>
+</body>
+</html>
